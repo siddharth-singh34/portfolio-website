@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Nav from "./components/Nav";
+import Footer from "./components/Footer";
+import BootOverlay from "./components/BootOverlay";
+import StarsBackground from "./components/StarsBackground";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,12 +26,24 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Runs before paint so the saved theme is applied with no flash.
+  // Defaults to dark when nothing is stored.
+  const themeInit = `(function(){try{var t=localStorage.getItem('theme');document.documentElement.classList.toggle('dark', t? t==='dark' : true);}catch(e){document.documentElement.classList.add('dark');}})();`;
+
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
+      className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col bg-transparent text-fg">
+        <script dangerouslySetInnerHTML={{ __html: themeInit }} />
+        <StarsBackground />
+        <BootOverlay />
+        <Nav />
+        {children}
+        <Footer />
+      </body>
     </html>
   );
 }
