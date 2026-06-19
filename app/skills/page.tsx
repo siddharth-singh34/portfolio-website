@@ -50,7 +50,7 @@ export default function SkillsPage() {
   ];
 
   return (
-    <main className="min-h-screen bg-base text-fg dark:bg-transparent">
+    <main className="bg-transparent text-fg">
       <div className="mx-auto max-w-4xl px-6 py-16">
         <h1 className="text-4xl font-bold mb-2">Skills</h1>
         <p className="text-muted mb-10 max-w-xl">

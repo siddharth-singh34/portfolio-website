@@ -23,7 +23,11 @@ export default function Home() {
               {"CS & Data Science student at HKU."}
             </h2>
             <p className="mt-6 max-w-xl text-muted leading-relaxed">{heroPitch}</p>
-            <Button asChild variant="outline" size="lg" className="mt-8">
+            <Button
+              asChild
+              variant="outline"
+              className="mt-8 h-auto rounded-md px-6 py-3 text-base text-foreground"
+            >
               <a href="/projects">See my work</a>
             </Button>
           </Reveal>
@@ -60,7 +64,10 @@ export default function Home() {
           <p className="mt-4 text-muted max-w-md mx-auto">
             Collaboration, or just a chat about code, data, or football.
           </p>
-          <Button asChild size="lg" className="mt-8">
+          <Button
+            asChild
+            className="mt-8 h-auto rounded-md px-6 py-3 text-base"
+          >
             <a href="/contact">Say hello</a>
           </Button>
         </Reveal>
