@@ -1,3 +1,11 @@
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+
 export default function VolunteeringPage() {
   const roles = [
     {
@@ -40,24 +48,30 @@ export default function VolunteeringPage() {
 
         <div className="grid gap-6">
           {roles.map((r) => (
-            <div
+            <Card
               key={r.id}
               id={r.id}
-              className="scroll-mt-24 rounded-xl border border-line p-6 transition duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:border-line-strong hover:shadow-2xl"
+              className="scroll-mt-24 gap-3 transition duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-2xl"
             >
-              <h3 className="text-lg font-semibold">{r.title}</h3>
-              <p className="mt-1 text-sm text-fg-soft">{r.org}</p>
-              <p className="mt-1 text-sm text-faint">{r.dates}</p>
-              <p className="mt-1 text-xs text-accent/80">{r.cause}</p>
-
-              <div className="mt-4 space-y-3">
+              <CardHeader>
+                <CardTitle className="text-lg">{r.title}</CardTitle>
+                <p className="text-fg-soft text-sm">{r.org}</p>
+                <p className="text-muted-foreground text-sm">{r.dates}</p>
+                <Badge variant="secondary" className="mt-1 w-fit">
+                  {r.cause}
+                </Badge>
+              </CardHeader>
+              <CardContent className="space-y-3">
                 {r.paragraphs.map((p, i) => (
-                  <p key={i} className="text-sm text-muted leading-relaxed">
+                  <p
+                    key={i}
+                    className="text-muted-foreground text-sm leading-relaxed"
+                  >
                     {p}
                   </p>
                 ))}
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>

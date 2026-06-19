@@ -1,4 +1,5 @@
 import SkillIcon from "../components/SkillIcon";
+import { Badge } from "@/components/ui/badge";
 
 export default function SkillsPage() {
   // All skills drawn from the Education and Projects pages, grouped & deduped.
@@ -64,15 +65,14 @@ export default function SkillsPage() {
               </h2>
               <div className="flex flex-wrap gap-3">
                 {g.skills.map((skill) => (
-                  <span
+                  <Badge
                     key={skill}
-                    className="inline-flex items-center gap-2 rounded-xl border border-line px-4 py-2 text-sm text-fg-soft transition duration-300 ease-out hover:-translate-y-1 hover:border-line-strong hover:text-fg hover:shadow-lg"
+                    variant="outline"
+                    className="gap-2 px-4 py-2 text-sm transition duration-300 ease-out hover:-translate-y-1 hover:shadow-lg [&>svg]:size-5"
                   >
-                    <span className="text-muted">
-                      <SkillIcon name={skill} className="h-5 w-5" />
-                    </span>
+                    <SkillIcon name={skill} className="h-5 w-5" />
                     {skill}
-                  </span>
+                  </Badge>
                 ))}
               </div>
             </section>

@@ -1,4 +1,13 @@
+import { ArrowUpRight } from "lucide-react";
+
 import Skills from "../components/Skills";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function EducationPage() {
   const schools = [
@@ -67,10 +76,10 @@ export default function EducationPage() {
 
         <div className="grid gap-6">
           {schools.map((s) => (
-            <div
+            <Card
               key={s.id}
               id={s.id}
-              className="group relative overflow-hidden scroll-mt-24 rounded-xl border border-line p-6 transition duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:border-line-strong hover:shadow-2xl hover:[&_*]:text-zinc-50"
+              className="group relative gap-0 overflow-hidden p-6 scroll-mt-24 transition duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-2xl hover:[&_*]:text-zinc-50"
             >
               {/* Campus photo background, fades in on hover */}
               <div
@@ -86,29 +95,21 @@ export default function EducationPage() {
               <div className="relative z-10">
               <div className="flex items-center gap-2">
                 <h3 className="text-lg font-semibold">{s.name}</h3>
-                <a
-                  href={s.website}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label={`Visit ${s.name} website`}
-                  title={`Visit ${s.name} website`}
-                  className="inline-flex items-center justify-center rounded-md border border-line p-1 text-muted hover:border-line-strong hover:text-fg transition"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="h-4 w-4"
-                    aria-hidden="true"
-                  >
-                    <path d="M7 17 17 7" />
-                    <path d="M7 7h10v10" />
-                  </svg>
-                </a>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      asChild
+                      variant="outline"
+                      size="icon-sm"
+                      aria-label={`Visit ${s.name} website`}
+                    >
+                      <a href={s.website} target="_blank" rel="noreferrer">
+                        <ArrowUpRight />
+                      </a>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Visit {s.name} website</TooltipContent>
+                </Tooltip>
               </div>
               <p className="mt-1 text-sm text-fg-soft">{s.degree}</p>
               <p className="mt-1 text-sm text-faint">{s.dates}</p>
@@ -149,7 +150,7 @@ export default function EducationPage() {
 
               <Skills skills={s.skills} />
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       </div>

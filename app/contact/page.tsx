@@ -1,4 +1,5 @@
 import ContactForm from "../components/ContactForm";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function ContactPage() {
   const contacts = [
@@ -74,23 +75,29 @@ export default function ContactPage() {
 
         <div className="grid gap-4 sm:grid-cols-2">
           {contacts.map((c) => (
-            <a
+            <Card
               key={c.id}
-              href={c.href}
-              target={c.external ? "_blank" : undefined}
-              rel={c.external ? "noreferrer" : undefined}
-              className="flex items-center gap-4 rounded-xl border border-line p-5 transition duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:border-line-strong hover:shadow-2xl"
+              asChild
+              className="transition duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-2xl"
             >
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-chip text-accent">
-                {c.icon}
-              </span>
-              <span className="min-w-0">
-                <span className="block font-semibold">{c.label}</span>
-                <span className="block truncate text-sm text-muted">
-                  {c.value}
-                </span>
-              </span>
-            </a>
+              <a
+                href={c.href}
+                target={c.external ? "_blank" : undefined}
+                rel={c.external ? "noreferrer" : undefined}
+              >
+                <CardContent className="flex items-center gap-4">
+                  <span className="bg-muted text-foreground flex h-12 w-12 shrink-0 items-center justify-center rounded-full">
+                    {c.icon}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block font-semibold">{c.label}</span>
+                    <span className="text-muted-foreground block truncate text-sm">
+                      {c.value}
+                    </span>
+                  </span>
+                </CardContent>
+              </a>
+            </Card>
           ))}
         </div>
 

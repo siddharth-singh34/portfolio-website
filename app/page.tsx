@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Reveal from "./components/Reveal";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   const heroPitch =
@@ -22,12 +23,9 @@ export default function Home() {
               {"CS & Data Science student at HKU."}
             </h2>
             <p className="mt-6 max-w-xl text-muted leading-relaxed">{heroPitch}</p>
-            <a
-              href="/projects"
-              className="inline-block mt-8 rounded-md border border-accent dark:border-white px-6 py-3 text-accent dark:text-white hover:bg-accent/10 transition"
-            >
-              See my work
-            </a>
+            <Button asChild variant="outline" size="lg" className="mt-8">
+              <a href="/projects">See my work</a>
+            </Button>
           </Reveal>
 
           {/* Portrait: rounded (not a full circle), cropped to keep Siddharth as the focus */}
@@ -62,12 +60,9 @@ export default function Home() {
           <p className="mt-4 text-muted max-w-md mx-auto">
             Collaboration, or just a chat about code, data, or football.
           </p>
-          <a
-            href="/contact"
-            className="inline-block mt-8 rounded-md border border-amber-500 dark:border-amber-400 px-6 py-3 text-amber-600 dark:text-amber-300 hover:bg-accent/10 transition"
-          >
-            Say hello
-          </a>
+          <Button asChild size="lg" className="mt-8">
+            <a href="/contact">Say hello</a>
+          </Button>
         </Reveal>
       </section>
     </main>

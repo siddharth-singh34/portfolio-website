@@ -2,8 +2,11 @@
 
 import { useState, type FormEvent } from "react";
 
-const inputCls =
-  "w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-fg placeholder:text-faint outline-none transition focus:border-line-strong";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function ContactForm() {
   const [name, setName] = useState("");
@@ -32,93 +35,83 @@ export default function ContactForm() {
 
   if (sent) {
     return (
-      <div className="rounded-xl border border-line bg-surface p-6 text-center">
-        <p className="font-semibold text-fg">Thanks, {name.split(" ")[0]}! 🎉</p>
-        <p className="mt-2 text-sm text-muted">
-          Your message has been noted. I&apos;ll get back to you at {email}.
-        </p>
-        <button
-          type="button"
-          onClick={reset}
-          className="mt-4 rounded-md border border-line px-4 py-2 text-sm text-fg transition hover:border-line-strong hover:bg-chip"
-        >
-          Send another
-        </button>
-      </div>
+      <Card>
+        <CardContent className="text-center">
+          <p className="font-semibold">Thanks, {name.split(" ")[0]}! 🎉</p>
+          <p className="text-muted-foreground mt-2 text-sm">
+            Your message has been noted. I&apos;ll get back to you at {email}.
+          </p>
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            onClick={reset}
+            className="mt-4"
+          >
+            Send another
+          </Button>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="rounded-xl border border-line bg-surface p-6"
-    >
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor="cf-name" className="mb-1 block text-sm text-muted">
-            Name
-          </label>
-          <input
-            id="cf-name"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Your name"
-            autoComplete="name"
-            required
-            className={inputCls}
-          />
-        </div>
-        <div>
-          <label htmlFor="cf-email" className="mb-1 block text-sm text-muted">
-            Email
-          </label>
-          <input
-            id="cf-email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            autoComplete="email"
-            required
-            className={inputCls}
-          />
-        </div>
-      </div>
+    <Card>
+      <CardContent>
+        <form onSubmit={handleSubmit}>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-2">
+              <Label htmlFor="cf-name">Name</Label>
+              <Input
+                id="cf-name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your name"
+                autoComplete="name"
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="cf-email">Email</Label>
+              <Input
+                id="cf-email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                autoComplete="email"
+                required
+              />
+            </div>
+          </div>
 
-      <div className="mt-4">
-        <label htmlFor="cf-message" className="mb-1 block text-sm text-muted">
-          Message
-        </label>
-        <textarea
-          id="cf-message"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder={
-            detailsReady
-              ? "What would you like to say?"
-              : "Enter your name and email first…"
-          }
-          rows={5}
-          disabled={!detailsReady}
-          className={`${inputCls} resize-y ${
-            !detailsReady ? "cursor-not-allowed opacity-50" : ""
-          }`}
-        />
-        {!detailsReady && (
-          <p className="mt-1 text-xs text-faint">
-            Add your name and a valid email to unlock the message box.
-          </p>
-        )}
-      </div>
+          <div className="mt-4 grid gap-2">
+            <Label htmlFor="cf-message">Message</Label>
+            <Textarea
+              id="cf-message"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder={
+                detailsReady
+                  ? "What would you like to say?"
+                  : "Enter your name and email first…"
+              }
+              rows={5}
+              disabled={!detailsReady}
+            />
+            {!detailsReady && (
+              <p className="text-muted-foreground text-xs">
+                Add your name and a valid email to unlock the message box.
+              </p>
+            )}
+          </div>
 
-      <button
-        type="submit"
-        disabled={!canSend}
-        className="mt-4 rounded-md border border-accent px-6 py-2.5 text-sm text-accent transition hover:bg-accent/10 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
-      >
-        Send message
-      </button>
-    </form>
+          <Button type="submit" size="lg" disabled={!canSend} className="mt-4">
+            Send message
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 }

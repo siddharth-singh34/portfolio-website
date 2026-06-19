@@ -1,6 +1,12 @@
-"use client";
+import { type ReactNode } from "react";
 
-import { useState, type ReactNode } from "react";
+import { Badge } from "@/components/ui/badge";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 // Stroke-style (lucide) icon wrapper.
 const stroke = (children: ReactNode) => (
@@ -115,67 +121,43 @@ export default function Skills({
   skills: string[];
   visible?: number;
 }) {
-  const [open, setOpen] = useState(false);
   const shown = skills.slice(0, visible);
   const hidden = skills.slice(visible);
 
   return (
     <div className="mt-4">
       <div className="flex flex-wrap items-center gap-2">
-        {!open &&
-          shown.map((s) => (
-            <span
-              key={s}
-              className="text-xs rounded-full bg-chip px-3 py-1 text-fg-soft"
-            >
-              {s}
-            </span>
-          ))}
-
-        {hidden.length > 0 && (
-          <button
-            type="button"
-            onClick={() => setOpen((v) => !v)}
-            aria-expanded={open}
-            className="inline-flex items-center gap-1 rounded-full bg-chip px-3 py-1 text-xs text-fg-soft transition hover:text-fg"
-          >
-            {open ? "Show less" : `+${hidden.length} skills`}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className={`h-3 w-3 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
-              aria-hidden="true"
-            >
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </button>
-        )}
+        {shown.map((s) => (
+          <Badge key={s} variant="secondary">
+            {s}
+          </Badge>
+        ))}
       </div>
 
-      {/* grid-rows 0fr -> 1fr animates the height smoothly */}
-      <div
-        className={`grid transition-all duration-300 ease-out ${
-          open ? "mt-3 grid-rows-[1fr]" : "grid-rows-[0fr]"
-        }`}
-      >
-        <div className="overflow-hidden">
-          <ul className="space-y-1.5">
-            {skills.map((s) => (
-              <li key={s} className="flex items-center gap-2 text-sm text-fg-soft">
-                <span className="shrink-0 text-muted">
-                  <SkillIcon name={s} />
-                </span>
-                <span>{s}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
+      {hidden.length > 0 && (
+        <Accordion type="single" collapsible className="mt-1">
+          <AccordionItem value="skills" className="border-b-0">
+            <AccordionTrigger className="text-muted-foreground py-2 text-sm hover:text-foreground hover:no-underline">
+              +{hidden.length} more skills
+            </AccordionTrigger>
+            <AccordionContent>
+              <ul className="space-y-1.5">
+                {skills.map((s) => (
+                  <li
+                    key={s}
+                    className="text-fg-soft flex items-center gap-2 text-sm"
+                  >
+                    <span className="text-muted-foreground shrink-0">
+                      <SkillIcon name={s} />
+                    </span>
+                    <span>{s}</span>
+                  </li>
+                ))}
+              </ul>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      )}
     </div>
   );
 }

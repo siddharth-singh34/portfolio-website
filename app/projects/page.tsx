@@ -1,4 +1,6 @@
 import SkillIcon from "../components/SkillIcon";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export default function ProjectsPage() {
   const projects = [
@@ -47,31 +49,40 @@ export default function ProjectsPage() {
 
         <div className="grid gap-6 sm:grid-cols-2">
           {projects.map((p) => (
-            <a
+            <Card
+              asChild
               key={p.id}
-              id={p.id}
-              href={p.link}
-              target={p.link === "#" ? undefined : "_blank"}
-              rel={p.link === "#" ? undefined : "noreferrer"}
-              className="block scroll-mt-24 rounded-xl border border-line p-6 transition duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:border-line-strong hover:bg-surface hover:shadow-2xl"
+              className="scroll-mt-24 gap-3 transition duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-2xl target:ring-2 target:ring-white target:ring-offset-2 target:ring-offset-transparent"
             >
-              <h3 className="text-lg font-semibold">{p.title}</h3>
-              <p className="mt-2 text-sm text-muted leading-relaxed">{p.description}</p>
-              {p.role ? (
-                <p className="mt-3 text-xs text-accent/80">My role: {p.role}</p>
-              ) : null}
-              <div className="mt-4 flex flex-wrap gap-2">
-                {p.tags.map((t) => (
-                  <span
-                    key={t}
-                    className="inline-flex items-center gap-1.5 text-xs rounded-full bg-chip px-3 py-1 text-fg-soft"
-                  >
-                    <SkillIcon name={t} className="h-3.5 w-3.5" />
-                    {t}
-                  </span>
-                ))}
-              </div>
-            </a>
+              <a
+                id={p.id}
+                href={p.link}
+                target={p.link === "#" ? undefined : "_blank"}
+                rel={p.link === "#" ? undefined : "noreferrer"}
+              >
+                <CardHeader>
+                  <CardTitle className="text-lg">{p.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    {p.description}
+                  </p>
+                  {p.role ? (
+                    <p className="text-foreground/80 mt-3 text-xs">
+                      My role: {p.role}
+                    </p>
+                  ) : null}
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {p.tags.map((t) => (
+                      <Badge key={t} variant="secondary">
+                        <SkillIcon name={t} className="h-3.5 w-3.5" />
+                        {t}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </a>
+            </Card>
           ))}
         </div>
       </div>

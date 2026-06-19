@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 // Short terminal "boot" sequences typed out when a page opens.
 const SEQUENCES: Record<string, string[]> = {
-  "/": ["$ ssh siddharth@portfolio", "> connecting...", "> welcome, Siddharth Singh ✓"],
+  "/": ["$ ssh siddharth@portfolio", "> connecting...", "> welcome ✓"],
   "/education": ["$ cat ~/education.md", "> loading records...", "> 2 institutions ✓"],
   "/projects": ["$ ls ~/projects", "> indexing...", "> 4 projects found ✓"],
   "/skills": ["$ cd ~/skills", "> loading skill tree...", "> skills loaded ✓"],

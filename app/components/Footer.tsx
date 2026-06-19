@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+
 // Footer with a centered row of minimal social icons (GitHub, LinkedIn, Email).
 export default function Footer() {
   const socials = [
@@ -58,19 +60,25 @@ export default function Footer() {
 
   return (
     <footer className="px-6 py-8">
-      <div className="mx-auto flex max-w-4xl items-center justify-center gap-6">
+      <div className="mx-auto flex max-w-4xl items-center justify-center gap-3">
         {socials.map((s) => (
-          <a
+          <Button
             key={s.label}
-            href={s.href}
-            target={s.external ? "_blank" : undefined}
-            rel={s.external ? "noreferrer" : undefined}
-            aria-label={s.label}
-            title={s.label}
-            className="text-muted transition hover:-translate-y-0.5 hover:text-fg"
+            asChild
+            variant="ghost"
+            size="icon"
+            className="rounded-full transition hover:-translate-y-0.5"
           >
-            {s.icon}
-          </a>
+            <a
+              href={s.href}
+              target={s.external ? "_blank" : undefined}
+              rel={s.external ? "noreferrer" : undefined}
+              aria-label={s.label}
+              title={s.label}
+            >
+              {s.icon}
+            </a>
+          </Button>
         ))}
       </div>
     </footer>
