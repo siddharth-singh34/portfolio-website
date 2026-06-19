@@ -25,6 +25,20 @@ export default function SkillsPage() {
       ],
     },
     {
+      title: "Web Development",
+      skills: [
+        "Next.js",
+        "React",
+        "Node.js",
+        "TypeScript",
+        "JavaScript",
+        "Tailwind CSS",
+        "shadcn/ui",
+        "Git",
+        "GitHub",
+      ],
+    },
+    {
       title: "Tools & Frameworks",
       skills: ["PyQt6"],
     },
