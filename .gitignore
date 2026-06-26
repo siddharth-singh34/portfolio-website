@@ -1,0 +1,9 @@
+.agents/
+.claude/
+skills-lock.json
+portfolio_website-version2/
+node_modules/
+.next/
+backend/.venv/
+backend/__pycache__/
+backend/users.db
