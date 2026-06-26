@@ -6,4 +6,4 @@ node_modules/
 .next/
 backend/.venv/
 backend/__pycache__/
-backend/users.db
+backend/*.db

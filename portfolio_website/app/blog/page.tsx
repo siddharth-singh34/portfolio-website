@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
 import BlogReadView from "../components/BlogReadView";
-import { loadBlogs, type BlogPost } from "@/lib/blog";
+import { getBlog, loadPublicBlogs, type BlogPost } from "@/lib/blog";
 import { Button } from "@/components/ui/button";
 
 export default function BlogReadPage() {
@@ -17,13 +17,19 @@ export default function BlogReadPage() {
     const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
     const slug = params.get("slug");
-    const all = loadBlogs();
-    const found =
-      (id && all.find((b) => b.id === id)) ||
-      (slug && all.find((b) => b.slug === slug)) ||
-      null;
-    setPost(found);
-    setReady(true);
+
+    async function fetchPost() {
+      if (id) {
+        setPost(await getBlog(id));
+      } else if (slug) {
+        const all = await loadPublicBlogs();
+        setPost(all.find((b) => b.slug === slug) ?? null);
+      } else {
+        setPost(null);
+      }
+      setReady(true);
+    }
+    fetchPost();
   }, []);
 
   if (!ready) {

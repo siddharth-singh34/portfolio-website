@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-import { loadBlogs, type BlogPost } from "@/lib/blog";
+import { loadPublicBlogs, type BlogPost } from "@/lib/blog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -25,17 +25,11 @@ export default function BlogsPage() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const today = new Date().toISOString().slice(0, 10);
-    setPosts(
-      loadBlogs().filter(
-        // Published, not hidden, and not scheduled for a future date.
-        (b) =>
-          b.status === "published" &&
-          !b.hidden &&
-          (!b.date || b.date <= today)
-      )
-    );
-    setReady(true);
+    // The backend already returns only published, visible, non-future posts.
+    loadPublicBlogs().then((all) => {
+      setPosts(all);
+      setReady(true);
+    });
   }, []);
 
   return (
@@ -43,7 +37,7 @@ export default function BlogsPage() {
       <div className="mx-auto max-w-4xl px-6 py-16">
         <h1 className="mb-2 text-4xl font-bold">Blogs</h1>
         <p className="text-muted mb-8 max-w-xl">
-          Published posts from the community.
+          Latest posts.
         </p>
 
         {!ready ? (

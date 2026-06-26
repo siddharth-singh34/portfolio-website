@@ -50,6 +50,8 @@ export default function LoginPage() {
         "user",
         JSON.stringify({ name: user.name, email: user.email })
       );
+      // Token authorizes blog create/edit/delete against the backend.
+      if (user.token) localStorage.setItem("token", user.token);
       window.dispatchEvent(new Event("auth-changed"));
       router.push("/");
     } catch {
@@ -116,13 +118,6 @@ export default function LoginPage() {
                 {loading ? "Logging in…" : "Log in"}
               </Button>
             </form>
-
-            <p className="text-muted-foreground mt-4 text-center text-sm">
-              Don&apos;t have an account?{" "}
-              <Button asChild variant="link" className="h-auto p-0 text-orange-500">
-                <a href="/signup">Sign up</a>
-              </Button>
-            </p>
           </CardContent>
         </Card>
       </div>

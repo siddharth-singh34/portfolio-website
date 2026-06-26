@@ -7,13 +7,14 @@ import { ArrowLeft } from "lucide-react";
 import BlockEditor from "../components/BlockEditor";
 import BlogReadView from "../components/BlogReadView";
 import {
-  loadBlogs,
+  getBlog,
+  loadAllBlogs,
   makeBlock,
   newId,
   readingTimeFromBlocks,
-  saveBlogs,
   slugify,
   uniqueSlug,
+  upsertBlog,
   type BlogPost,
   type ContentBlock,
 } from "@/lib/blog";
@@ -105,34 +106,37 @@ export default function BlogEditorPage() {
       // ignore
     }
 
-    if (pid) {
-      const post = loadBlogs().find((b) => b.id === pid);
-      if (post) {
-        setId(post.id);
-        setTitle(post.title);
-        setSlug(post.slug);
-        setFeaturedImage(post.featuredImage);
-        setExcerpt(post.excerpt);
-        setBlocks(post.blocks?.length ? post.blocks : [makeBlock("text")]);
-        setCategory(post.category);
-        setTags(post.tags.join(", "));
-        setAuthName(post.authorName);
-        setAuthImg(post.authorImage);
-        setDate(post.date);
-        setStatus(post.status);
-        setMetaTitle(post.metaTitle);
-        setMetaDescription(post.metaDescription);
-        setReadingTime(String(post.readingTime));
-        setLoaded(true);
-        return;
+    async function init() {
+      if (pid) {
+        const post = await getBlog(pid);
+        if (post) {
+          setId(post.id);
+          setTitle(post.title);
+          setSlug(post.slug);
+          setFeaturedImage(post.featuredImage);
+          setExcerpt(post.excerpt);
+          setBlocks(post.blocks?.length ? post.blocks : [makeBlock("text")]);
+          setCategory(post.category);
+          setTags(post.tags.join(", "));
+          setAuthName(post.authorName);
+          setAuthImg(post.authorImage);
+          setDate(post.date);
+          setStatus(post.status);
+          setMetaTitle(post.metaTitle);
+          setMetaDescription(post.metaDescription);
+          setReadingTime(String(post.readingTime));
+          setLoaded(true);
+          return;
+        }
       }
-    }
 
-    setBlocks([makeBlock("text")]);
-    setDate(new Date().toISOString().slice(0, 10));
-    setAuthName(author);
-    setAuthImg(authorImg);
-    setLoaded(true);
+      setBlocks([makeBlock("text")]);
+      setDate(new Date().toISOString().slice(0, 10));
+      setAuthName(author);
+      setAuthImg(authorImg);
+      setLoaded(true);
+    }
+    init();
   }, []);
 
   useEffect(() => {
@@ -231,7 +235,7 @@ export default function BlogEditorPage() {
     };
   }
 
-  function save(nextStatus: "draft" | "published") {
+  async function save(nextStatus: "draft" | "published") {
     setSaveError("");
     if (nextStatus === "published" && !title.trim()) {
       setSaveError("Please add a title before publishing.");
@@ -239,18 +243,16 @@ export default function BlogEditorPage() {
       return;
     }
     const post = buildPost(nextStatus);
-    post.slug = uniqueSlug(post.slug, post.id);
+    // Make the slug unique against existing posts (excluding this one).
+    const existing = await loadAllBlogs();
+    const taken = existing.filter((b) => b.id !== post.id).map((b) => b.slug);
+    post.slug = uniqueSlug(post.slug, taken);
     setStatus(nextStatus);
 
-    const all = loadBlogs();
-    const exists = all.some((b) => b.id === post.id);
-    const next = exists
-      ? all.map((b) => (b.id === post.id ? post : b))
-      : [post, ...all];
-    const ok = saveBlogs(next);
+    const ok = await upsertBlog(post);
     if (!ok) {
       setSaveError(
-        "Couldn't save — your browser storage is full (large uploaded media). Use YouTube links or smaller images, then try again."
+        "Couldn't save — make sure you're logged in and the backend is reachable, then try again."
       );
       setErrorOpen(true);
       return;

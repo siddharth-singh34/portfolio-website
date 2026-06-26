@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Pencil } from "lucide-react";
 
 import AvatarCropper from "../components/AvatarCropper";
-import { type BlogPost, loadBlogs, removeBlog, upsertBlog } from "@/lib/blog";
+import { type BlogPost, loadAllBlogs, removeBlog, upsertBlog } from "@/lib/blog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -148,16 +148,21 @@ export default function ProfilePage() {
     } catch {
       setUser(null);
     }
-    setBlogs(loadBlogs());
-    setReady(true);
+    loadAllBlogs().then((all) => {
+      setBlogs(all);
+      setReady(true);
+    });
   }, []);
 
-  function deleteBlog(id: string) {
-    setBlogs(removeBlog(id));
+  async function deleteBlog(id: string) {
+    const ok = await removeBlog(id);
+    if (ok) setBlogs((prev) => prev.filter((b) => b.id !== id));
   }
 
-  function patchBlog(b: BlogPost, patch: Partial<BlogPost>) {
-    setBlogs(upsertBlog({ ...b, ...patch }));
+  async function patchBlog(b: BlogPost, patch: Partial<BlogPost>) {
+    const updated = { ...b, ...patch };
+    const ok = await upsertBlog(updated);
+    if (ok) setBlogs((prev) => prev.map((x) => (x.id === b.id ? updated : x)));
   }
 
   function persist(next: User) {
@@ -201,6 +206,7 @@ export default function ProfilePage() {
 
   function logout() {
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
     window.dispatchEvent(new Event("auth-changed"));
     router.push("/");
   }

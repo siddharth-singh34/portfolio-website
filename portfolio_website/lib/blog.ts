@@ -71,51 +71,87 @@ export function youtubeId(url: string): string | null {
   return m ? m[1] : null;
 }
 
-export function loadBlogs(): BlogPost[] {
-  if (typeof window === "undefined") return [];
+// ---- Backend storage --------------------------------------------------------
+// Blogs live on the FastAPI backend so every visitor sees the same posts.
+// Reading is public; creating/editing/deleting requires the owner's token
+// (saved in localStorage on login).
+
+const API =
+  process.env.NEXT_PUBLIC_API_URL ?? "https://portfolio-backend-o2f1.onrender.com";
+
+function authHeader(): Record<string, string> {
+  if (typeof window === "undefined") return {};
+  const token = localStorage.getItem("token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+// Public: every published, visible, non-future post (for the Blogs page).
+export async function loadPublicBlogs(): Promise<BlogPost[]> {
   try {
-    const raw = localStorage.getItem("blogs");
-    return raw ? (JSON.parse(raw) as BlogPost[]) : [];
+    const res = await fetch(`${API}/blogs`);
+    if (!res.ok) return [];
+    return (await res.json()) as BlogPost[];
   } catch {
     return [];
   }
 }
 
-export function saveBlogs(blogs: BlogPost[]): boolean {
+// Owner: every post including drafts/hidden (for the profile page).
+export async function loadAllBlogs(): Promise<BlogPost[]> {
   try {
-    localStorage.setItem("blogs", JSON.stringify(blogs));
-    return true;
+    const res = await fetch(`${API}/admin/blogs`, { headers: authHeader() });
+    if (!res.ok) return [];
+    return (await res.json()) as BlogPost[];
+  } catch {
+    return [];
+  }
+}
+
+// A single post by id (owner can also fetch their own drafts).
+export async function getBlog(id: string): Promise<BlogPost | null> {
+  try {
+    const res = await fetch(`${API}/blog?id=${encodeURIComponent(id)}`, {
+      headers: authHeader(),
+    });
+    if (!res.ok) return null;
+    return (await res.json()) as BlogPost;
+  } catch {
+    return null;
+  }
+}
+
+// Create or update a post (owner only). Returns true on success.
+export async function upsertBlog(post: BlogPost): Promise<boolean> {
+  try {
+    const res = await fetch(`${API}/blogs`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...authHeader() },
+      body: JSON.stringify(post),
+    });
+    return res.ok;
   } catch {
     return false;
   }
 }
 
-export function upsertBlog(post: BlogPost): BlogPost[] {
-  const all = loadBlogs();
-  const exists = all.some((b) => b.id === post.id);
-  const next = exists
-    ? all.map((b) => (b.id === post.id ? post : b))
-    : [post, ...all];
-  saveBlogs(next);
-  return next;
+// Delete a post by id (owner only). Returns true on success.
+export async function removeBlog(id: string): Promise<boolean> {
+  try {
+    const res = await fetch(`${API}/blogs?id=${encodeURIComponent(id)}`, {
+      method: "DELETE",
+      headers: authHeader(),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
 }
 
-export function removeBlog(id: string): BlogPost[] {
-  const next = loadBlogs().filter((b) => b.id !== id);
-  saveBlogs(next);
-  return next;
-}
-
-// Ensure the slug is unique among existing posts (excluding the one being saved).
-export function uniqueSlug(base: string, excludeId?: string): string {
-  const taken = new Set(
-    loadBlogs()
-      .filter((b) => b.id !== excludeId)
-      .map((b) => b.slug)
-      .filter(Boolean)
-  );
-  if (!base || !taken.has(base)) return base;
+// Ensure the slug is unique among the given taken slugs.
+export function uniqueSlug(base: string, taken: string[]): string {
+  const set = new Set(taken.filter(Boolean));
+  if (!base || !set.has(base)) return base;
   let n = 2;
-  while (taken.has(`${base}-${n}`)) n += 1;
+  while (set.has(`${base}-${n}`)) n += 1;
   return `${base}-${n}`;
 }
