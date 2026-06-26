@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
 
 import ThemeToggle from "./ThemeToggle";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Accordion,
@@ -19,6 +20,14 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type LinkItem = { label: string; href: string };
 
@@ -45,6 +54,65 @@ const sections = [
   { label: "Projects", href: "/projects", links: projectLinks },
   { label: "Volunteering", href: "/volunteering", links: volunteeringLinks },
 ];
+
+type User = { name: string; email: string; avatar?: string };
+
+function initials(name: string) {
+  return (
+    name
+      .trim()
+      .split(/\s+/)
+      .map((w) => w[0])
+      .slice(0, 2)
+      .join("")
+      .toUpperCase() || "?"
+  );
+}
+
+// Orange auth button: "Log in" link when logged out; avatar + name with a
+// dropdown (View profile / Log out) when logged in.
+function AuthButton({
+  user,
+  onLogout,
+  className = "",
+}: {
+  user: User | null;
+  onLogout: () => void;
+  className?: string;
+}) {
+  const base =
+    "rounded-full bg-orange-500 font-medium text-white shadow-lg hover:bg-orange-600";
+  if (user) {
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button type="button" className={`${base} ${className} max-w-[12rem] pl-1.5`}>
+            <Avatar className="size-6">
+              <AvatarImage src={user.avatar} alt={user.name} />
+              <AvatarFallback className="bg-orange-600 text-[10px] text-white">
+                {initials(user.name)}
+              </AvatarFallback>
+            </Avatar>
+            <span className="truncate">{user.name}</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-48">
+          <DropdownMenuLabel className="truncate">{user.name}</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <a href="/profile">View profile</a>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={onLogout}>Log out</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  }
+  return (
+    <Button asChild className={`${base} ${className}`}>
+      <a href="/login">Log in</a>
+    </Button>
+  );
+}
 
 const navCls = (active: boolean) =>
   `rounded-full px-3 py-1.5 transition ${
@@ -92,6 +160,34 @@ export default function Nav() {
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href;
 
+  // Logged-in user (kept in localStorage by the login/signup pages).
+  const [user, setUser] = useState<User | null>(null);
+  useEffect(() => {
+    const read = () => {
+      try {
+        const raw = localStorage.getItem("user");
+        setUser(raw ? (JSON.parse(raw) as User) : null);
+      } catch {
+        setUser(null);
+      }
+    };
+    read();
+    window.addEventListener("auth-changed", read);
+    window.addEventListener("storage", read);
+    return () => {
+      window.removeEventListener("auth-changed", read);
+      window.removeEventListener("storage", read);
+    };
+  }, []);
+  const logout = () => {
+    localStorage.removeItem("user");
+    window.dispatchEvent(new Event("auth-changed"));
+  };
+
+  // The blog editor is a focused full-page workspace with its own top bar —
+  // hide the site nav there so they don't overlap.
+  if (pathname === "/blog-editor") return null;
+
   return (
     <>
       {/* DESKTOP: floating pill with hover dropdowns (shown when there's room) */}
@@ -128,7 +224,13 @@ export default function Nav() {
             width="w-72"
             active={isActive("/volunteering")}
           />
-          <a href="/contact" className={navCls(isActive("/contact"))}>
+          <a href="/blogs" className={navCls(isActive("/blogs"))}>
+            Blogs
+          </a>
+          <a
+            href="/contact"
+            className={`${navCls(isActive("/contact"))} border border-orange-500`}
+          >
             Contact
           </a>
         </nav>
@@ -137,6 +239,9 @@ export default function Nav() {
         <div className="flex h-10 w-10 items-center justify-center rounded-full border border-line bg-surface/70 shadow-lg backdrop-blur">
           <ThemeToggle />
         </div>
+
+        {/* Log in / user name */}
+        <AuthButton user={user} onLogout={logout} className="px-5" />
       </div>
 
       {/* MOBILE: compact bar with a Sheet drawer (shown when the full nav won't fit) */}
@@ -162,6 +267,9 @@ export default function Nav() {
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line bg-surface/70 shadow-lg backdrop-blur">
             <ThemeToggle />
           </div>
+
+          {/* Log in / user name */}
+          <AuthButton user={user} onLogout={logout} className="shrink-0 px-4" />
         </div>
 
         <SheetContent side="right" className="font-nav w-72">
@@ -210,6 +318,17 @@ export default function Nav() {
             >
               <a href="/skills" onClick={close}>
                 Skills
+              </a>
+            </Button>
+            <Button
+              asChild
+              variant="ghost"
+              className={`w-full justify-start px-2 ${
+                isActive("/blogs") ? "font-bold" : "font-medium"
+              }`}
+            >
+              <a href="/blogs" onClick={close}>
+                Blogs
               </a>
             </Button>
             <Button
