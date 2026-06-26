@@ -75,10 +75,12 @@ function AuthButton({
   user,
   onLogout,
   className = "",
+  compact = false,
 }: {
   user: User | null;
   onLogout: () => void;
   className?: string;
+  compact?: boolean;
 }) {
   const base =
     "rounded-full bg-orange-500 font-medium text-white shadow-lg hover:bg-orange-600";
@@ -86,14 +88,20 @@ function AuthButton({
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button type="button" className={`${base} ${className} max-w-[12rem] pl-1.5`}>
+          <Button
+            type="button"
+            aria-label={user.name}
+            className={`${base} ${className} ${
+              compact ? "size-10 p-0" : "max-w-[12rem] pl-1.5"
+            }`}
+          >
             <Avatar className="size-6">
               <AvatarImage src={user.avatar} alt={user.name} />
               <AvatarFallback className="bg-orange-600 text-[10px] text-white">
                 {initials(user.name)}
               </AvatarFallback>
             </Avatar>
-            <span className="truncate">{user.name}</span>
+            {!compact && <span className="truncate">{user.name}</span>}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
@@ -277,8 +285,13 @@ export default function Nav() {
             <ThemeToggle />
           </div>
 
-          {/* Log in / user name */}
-          <AuthButton user={user} onLogout={logout} className="shrink-0 px-4" />
+          {/* Log in / user avatar (name hidden on mobile — avatar only) */}
+          <AuthButton
+            user={user}
+            onLogout={logout}
+            compact
+            className="shrink-0"
+          />
         </div>
 
         <SheetContent side="right" className="font-nav flex w-72 flex-col">
