@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp -f portfolio_website-version2/components/ui/dropdown-menu.tsx portfolio_website/components/ui/dropdown-menu.tsx)",
+      "Bash(cp -f portfolio_website-version2/app/profile/page.tsx portfolio_website/app/profile/page.tsx)"
+    ]
+  }
+}
