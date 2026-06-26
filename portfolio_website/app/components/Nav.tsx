@@ -248,8 +248,17 @@ export default function Nav() {
       <Sheet open={open} onOpenChange={setOpen}>
         <div className="sticky top-0 z-30 flex items-center justify-center gap-2 px-4 pt-4 md:hidden">
           <nav className="font-nav flex flex-1 items-center justify-between rounded-full border border-line bg-surface/70 px-3 py-2 font-medium shadow-lg backdrop-blur">
-            <a href="/" className="px-2 font-semibold text-fg">
-              Siddharth Singh
+            <a
+              href="/"
+              className="flex items-center px-1"
+              aria-label="Home — Siddharth Singh"
+            >
+              <Avatar className="size-8">
+                <AvatarImage src="/siddharth.jpeg" alt="Siddharth Singh" />
+                <AvatarFallback className="bg-orange-500 text-xs text-white">
+                  SS
+                </AvatarFallback>
+              </Avatar>
             </a>
             <SheetTrigger asChild>
               <Button
@@ -272,12 +281,12 @@ export default function Nav() {
           <AuthButton user={user} onLogout={logout} className="shrink-0 px-4" />
         </div>
 
-        <SheetContent side="right" className="font-nav w-72">
+        <SheetContent side="right" className="font-nav flex w-72 flex-col">
           <SheetHeader>
             <SheetTitle>Menu</SheetTitle>
           </SheetHeader>
 
-          <nav className="flex flex-col overflow-y-auto px-2 pb-4">
+          <nav className="flex flex-1 flex-col overflow-y-auto px-2 pb-4">
             <Accordion type="multiple" className="w-full">
               {sections.map((sec) => (
                 <AccordionItem key={sec.label} value={sec.label}>
@@ -343,6 +352,22 @@ export default function Nav() {
               </a>
             </Button>
           </nav>
+
+          {/* Profile picture + full name pinned to the bottom of the drawer */}
+          <a
+            href="/"
+            onClick={close}
+            className="mt-auto flex items-center gap-3 border-t border-line px-4 py-4 transition hover:bg-chip"
+          >
+            <Avatar className="size-10">
+              <AvatarImage src="/siddharth.jpeg" alt="Siddharth Singh" />
+              <AvatarFallback className="bg-orange-500 text-white">SS</AvatarFallback>
+            </Avatar>
+            <div className="leading-tight">
+              <p className="font-semibold text-fg">Siddharth Singh</p>
+              <p className="text-muted text-xs">CS &amp; Data Science · HKU</p>
+            </div>
+          </a>
         </SheetContent>
       </Sheet>
     </>
