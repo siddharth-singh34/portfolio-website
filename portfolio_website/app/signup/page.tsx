@@ -14,7 +14,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const API =
+  process.env.NEXT_PUBLIC_API_URL ?? "https://portfolio-backend-o2f1.onrender.com";
 
 export default function SignupPage() {
   const router = useRouter();
